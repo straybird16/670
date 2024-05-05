@@ -58,7 +58,7 @@ def load_data(config) -> tuple:
     train_x, train_y = filter_gray_images_(train_x, train_y)
     val_x, val_y = filter_gray_images_(val_x, val_y)
     # to 0-1 range
-    train_x, train_y, val_x, val_y = train_x/255.0, train_y/255.0, val_x/255.0, val_y/255.0
+    train_x, train_y, val_x, val_y = train_x/255.0, train_y, val_x/255.0, val_y
     return train_x, train_y, val_x, val_y
 
     

@@ -49,9 +49,11 @@ class ViT(nn.Module):
         x = torch.cat([batch_class_token, x], dim=1)
         x = self.transformer.encoder(x)
         # discard the output token
+        clt = x[:,:1].permute(0, 2, 1)  # (N, 1, hidden_dim) -> (N, hidden_dim, 1)
         x = x[:, 1:].permute(0, 2, 1)  # (N, grid_num, hidden_dim) -> (N, hidden_dim, grid_num)
         x = self.decoder(x)  #  (N, hidden_dim, decoder_dim*decoder_dim)
-        #x = x.reshape(x.shape[:2]+(self.decoder_dim, self.decoder_dim))  #  (N, hidden_dim, (decoder_dim*decoder_dim)) -> #  (N, hidden_dim, decoder_dim, decoder_dim)
+        x = x * clt  # leverage classification knowledge to reconstruct from __hidden_dim__ channels of features
+        
         x = self.conv1x1Block1(x)
         x = self.conv1x1Block2(x)  
         return x
